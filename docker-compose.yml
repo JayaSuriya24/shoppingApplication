@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  customer-service:
+    image: customerimage
+    container_name: customerservice
+    build: c2_s3_rest_api_mongodb_pc1-master/
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 8084:8084
+    depends_on:
+      - mongoService
+
+
+  mongoService:
+    image: mongo
+    container_name: mongocontainer2
+    ports:
+      - 27017:27017
+    networks:
+      - mynetwork
+
+  authentication-service:
+    image: authenticationimage2
+    container_name: authenticationContainer2
+    build: Userauthenticationservice
+    restart: always
+    networks:
+      - mynetwork
+    ports:
+      - 8085:8085
+    depends_on:
+      - mysqlService
+
+
+  mysqlService:
+    image: mysql:latest
+    container_name: mysqlService
+    networks:
+      - mynetwork
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+
+networks:
+  mynetwork:
+    driver: bridge
